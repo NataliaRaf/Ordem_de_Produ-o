@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Sistema de Produção</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>Painel de Produção</h1>
+    </header>
+
+    <div class="controls">
+        <input type="file" id="upload" accept=".xlsx, .xls">
+        <button id="btnProcessar">Processar</button>
+        <select id="filtroProduto">
+            <option value="todos">Todos os Produtos</option>
+        </select>
+        <button id="btnRelatorio">Gerar Relatório</button>
+    </div>
+
+    <div class="cards">
+        <div class="card">
+            <h3>Total Geral</h3>
+            <p id="totalGeral">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Total por Produto</h3>
+            <div id="totalPorProduto"></div>
+        </div>
+
+        <div class="card">
+            <h3>Total por Cor</h3>
+            <div id="totalPorCor"></div>
+        </div>
+    </div>
+
+    <table id="tabela">
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Cor</th>
+                <th>Tamanho</th>
+                <th>Quantidade</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
