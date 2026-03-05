@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
 
     let dadosPlanilha = [];
+    let dadosPlanilhaAnterior = [];
     let dadosProcessados = [];
 
     const upload = document.getElementById("upload");
@@ -44,7 +45,6 @@ document.addEventListener("DOMContentLoaded", function () {
             let multiplicador = 1;
             let produtoBase = "";
 
-            // 🔹 LÓGICA ORIGINAL MANTIDA
             if (produtoOriginal.includes("kit 3")) {
                 multiplicador = 3;
                 produtoBase = "Conjunto";
@@ -63,8 +63,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 produtoBase = "Colete";
             }
             else {
-                // Qualquer outro produto novo
-                produtoBase = linha["Nome do Produto"];
+
+                let nomeProduto = linha["Nome do Produto"];
+
+                if(nomeProduto.toLowerCase().includes("jaleco")){
+                    produtoBase = "Jaleco Feminino";
+                }else{
+                    produtoBase = nomeProduto;
+                }
+
             }
 
             let partes = variacao.split(",");
@@ -77,7 +84,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 cor = cor.trim();
 
-                // 🔹 DIVISÃO CORRETA DOS KITS
                 let valor = (quantidade * multiplicador) / cores.length;
 
                 let chave = `${produtoBase}|${cor}|${tamanho}`;
@@ -95,13 +101,16 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         dadosProcessados = Object.entries(resultado).map(item => {
+
             let partes = item[0].split("|");
+
             return {
                 produto: partes[0],
                 cor: partes[1],
                 tamanho: partes[2],
                 quantidade: item[1]
             };
+
         });
 
         atualizarTabela("todos");
@@ -123,11 +132,121 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("dataRelatorio").innerText =
             "Data: " + new Date().toLocaleDateString("pt-BR");
 
+        gerarAlertaProducao();
+
+        dadosPlanilhaAnterior = JSON.parse(JSON.stringify(dadosPlanilha));
+
     });
 
     filtroProduto.addEventListener("change", function () {
         atualizarTabela(this.value);
     });
+
+    function gerarAlertaProducao(){
+
+    const alerta = document.getElementById("alertaProducao");
+
+    if(!dadosPlanilhaAnterior.length){
+        alerta.innerHTML="";
+        return;
+    }
+
+    let mapaAnterior = {};
+    let mapaAtual = {};
+
+    function normalizarProduto(nome){
+
+        nome = nome.toLowerCase();
+
+        if(nome.includes("kit") || nome.includes("conjunto")) return "Conjunto";
+        if(nome.includes("jaleco")) return "Jaleco";
+        if(nome.includes("calça")) return "Calça";
+        if(nome.includes("colete")) return "Colete";
+
+        return nome;
+
+    }
+
+    function montarMapa(planilha,mapa){
+
+        planilha.forEach(linha=>{
+
+            let produto = normalizarProduto(linha["Nome do Produto"] || "");
+            let variacao = linha["Nome da variação"] || "";
+            let quantidade = Number(linha["Quantidade"]) || 0;
+
+            if(!variacao) return;
+
+            let partes = variacao.split(",");
+            let coresTexto = partes[0];
+            let tamanho = partes[1] ? partes[1].trim().toUpperCase() : "";
+
+            let cores = coresTexto.split("+");
+
+            cores.forEach(cor=>{
+
+                cor = cor.trim();
+
+                let chave = `${produto}|${tamanho}|${cor}`;
+
+                mapa[chave] = (mapa[chave] || 0) + quantidade;
+
+            });
+
+        });
+
+    }
+
+    montarMapa(dadosPlanilhaAnterior,mapaAnterior);
+    montarMapa(dadosPlanilha,mapaAtual);
+
+    let estrutura = {};
+
+    Object.keys(mapaAtual).forEach(chave=>{
+
+        let antes = mapaAnterior[chave] || 0;
+        let agora = mapaAtual[chave];
+
+        let diferenca = agora - antes;
+
+        if(diferenca <= 0) return;
+
+        let partes = chave.split("|");
+
+        let produto = partes[0];
+        let tamanho = partes[1];
+        let cor = partes[2];
+
+        if(!estrutura[produto]) estrutura[produto] = {};
+        if(!estrutura[produto][tamanho]) estrutura[produto][tamanho] = [];
+
+        estrutura[produto][tamanho].push(`${cor}(${diferenca})`);
+
+    });
+
+    let html = "<h3>⚠ Corte necessário</h3>";
+
+    Object.keys(estrutura).forEach(produto=>{
+
+        html += `<div style="margin-top:10px;font-weight:bold;">${produto}</div>`;
+
+        Object.keys(estrutura[produto]).forEach(tamanho=>{
+
+            let cores = estrutura[produto][tamanho].join(" ");
+
+            html += `
+            <div style="margin-left:10px;">
+            ${tamanho} → ${cores}
+            </div>
+            `;
+
+        });
+
+    });
+
+    alerta.innerHTML = html;
+
+}
 
     function atualizarTabela(filtro) {
 
@@ -138,19 +257,59 @@ document.addEventListener("DOMContentLoaded", function () {
             ? dadosProcessados
             : dadosProcessados.filter(d => d.produto === filtro);
 
-        dadosFiltrados.forEach(d => {
+        let produtos = {};
 
-            let row = `
-                <tr>
-                    <td>${d.produto}</td>
-                    <td>${d.cor}</td>
-                    <td>${d.tamanho}</td>
-                    <td>${d.quantidade}</td>
+        dadosFiltrados.forEach(item => {
+
+            if (!produtos[item.produto]) produtos[item.produto] = {};
+            if (!produtos[item.produto][item.tamanho]) produtos[item.produto][item.tamanho] = {};
+            if (!produtos[item.produto][item.tamanho][item.cor]) produtos[item.produto][item.tamanho][item.cor] = 0;
+
+            produtos[item.produto][item.tamanho][item.cor] += item.quantidade;
+
+        });
+
+        const ordemTamanhos = ["PP","P","M","G","GG","XG","XXG"];
+
+        Object.keys(produtos).forEach(produto => {
+
+            tbody.innerHTML += `
+                <tr class="produto-bloco">
+                    <td colspan="4">${produto}</td>
                 </tr>
             `;
 
-            tbody.innerHTML += row;
+            let tamanhos = produtos[produto];
+
+            Object.keys(tamanhos)
+            .sort((a,b)=>ordemTamanhos.indexOf(a)-ordemTamanhos.indexOf(b))
+            .forEach(tamanho => {
+
+                tbody.innerHTML += `
+                    <tr class="tamanho-bloco">
+                        <td colspan="4">Tamanho ${tamanho}</td>
+                    </tr>
+                `;
+
+                Object.keys(tamanhos[tamanho]).forEach(cor => {
+
+                    let quantidade = tamanhos[tamanho][cor];
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td></td>
+                            <td>${cor}</td>
+                            <td>${tamanho}</td>
+                            <td>${quantidade}</td>
+                        </tr>
+                    `;
+
+                });
+
+            });
+
         });
+
     }
 
     btnRelatorio.addEventListener("click", function () {

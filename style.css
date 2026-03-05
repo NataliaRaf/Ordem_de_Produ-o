@@ -62,6 +62,30 @@ select {
     margin-top: 0;
 }
 
+/* ALERTA DE PRODUÇÃO */
+
+.alerta-producao{
+    background:#fff3cd;
+    border:2px solid #ffc107;
+    padding:18px;
+    margin:25px 0;
+    border-radius:10px;
+}
+
+.alerta-producao h3{
+    margin-top:0;
+}
+
+.alerta-producao div{
+    padding:3px 0;
+}
+
+/* TABELA */
+
+.tabela-container{
+    overflow-x:auto;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -79,8 +103,41 @@ td {
     border-bottom: 1px solid #ddd;
 }
 
+/* BLOCO PRODUTO */
+
+.produto-bloco{
+    background:#2d89ef;
+    color:white;
+    font-weight:bold;
+}
+
+/* BLOCO TAMANHO */
+
+.tamanho-bloco{
+    background:#e9f2ff;
+    font-weight:bold;
+}
+
+/* IMPRESSÃO */
+
 @media print {
-    .controls {
-        display: none;
+
+    body{
+        background:white;
     }
+
+    .controls{
+        display:none;
+    }
+
+    .cards{
+        display:none;
+    }
+
+    .alerta-producao{
+        border:none;
+        background:white;
+        padding:0;
+    }
+
 }
