@@ -68,7 +68,6 @@ cores.forEach(cor => {
 
 let valor;
 
-// divisão de cores somente para conjunto
 if(produtoBase === "Conjunto"){
 valor = (quantidade * multiplicador) / cores.length;
 }else{
@@ -145,13 +144,17 @@ function normalizarProduto(nome){
 
 nome = nome.toLowerCase();
 
+// jaleco
 if(nome.includes("jaleco")) return "Jaleco";
 
-if(nome.includes("calça")) return "Calça";
+// calça avulsa
+if(nome.includes("calça") && !nome.includes("conjunto") && !nome.includes("kit")) return "Calça";
 
-if(nome.includes("colete")) return "Colete";
+// colete avulso
+if(nome.includes("colete") && !nome.includes("conjunto") && !nome.includes("kit")) return "Colete";
 
-if(nome.includes("kit") || nome.includes("conjunto")) return "Conjunto";
+// conjunto ou kit
+if(nome.includes("conjunto") || nome.includes("kit")) return "Conjunto";
 
 return "Outros";
 
@@ -190,142 +193,3 @@ let tamanho = partes.length > 1 ? partes[1].trim().toUpperCase() : "";
 let cores = coresTexto
 .split("+")
 .map(c => c.trim())
-.filter(c => c.length > 0);
-
-cores.forEach(cor=>{
-
-let chave = `${produto}|${tamanho}|${cor}`;
-
-mapa[chave] = (mapa[chave] || 0) + quantidade;
-
-});
-
-});
-
-}
-
-montarMapa(dadosPlanilhaAnterior,mapaAnterior);
-montarMapa(dadosPlanilha,mapaAtual);
-
-let estrutura = {};
-
-Object.keys(mapaAtual).forEach(chave=>{
-
-let antes = mapaAnterior[chave] || 0;
-let agora = mapaAtual[chave];
-
-let diferenca = agora - antes;
-
-if(diferenca <= 0) return;
-
-let partes = chave.split("|");
-
-let produto = partes[0];
-let tamanho = partes[1];
-let cor = partes[2];
-
-if(!estrutura[produto]) estrutura[produto] = {};
-if(!estrutura[produto][tamanho]) estrutura[produto][tamanho] = [];
-
-estrutura[produto][tamanho].push(`${cor}(${diferenca})`);
-
-});
-
-let html = "<h3>⚠ Corte necessário</h3>";
-
-Object.keys(estrutura).forEach(produto=>{
-
-html += `<div style="margin-top:10px;font-weight:bold;">${produto}</div>`;
-
-Object.keys(estrutura[produto]).forEach(tamanho=>{
-
-let cores = estrutura[produto][tamanho].join(" ");
-
-html += `
-<div style="margin-left:10px;">
-${tamanho} → ${cores}
-</div>
-`;
-
-});
-
-});
-
-alerta.innerHTML = html;
-
-}
-
-
-function atualizarTabela(filtro) {
-
-const tbody = document.querySelector("#tabela tbody");
-
-tbody.innerHTML = "";
-
-let dadosFiltrados = filtro === "todos"
-? dadosProcessados
-: dadosProcessados.filter(d => d.produto === filtro);
-
-let produtos = {};
-
-dadosFiltrados.forEach(item => {
-
-if (!produtos[item.produto]) produtos[item.produto] = {};
-if (!produtos[item.produto][item.tamanho]) produtos[item.produto][item.tamanho] = {};
-if (!produtos[item.produto][item.tamanho][item.cor]) produtos[item.produto][item.tamanho][item.cor] = 0;
-
-produtos[item.produto][item.tamanho][item.cor] += item.quantidade;
-
-});
-
-const ordemTamanhos = ["PP","P","M","G","GG","XG","XXG"];
-
-Object.keys(produtos).forEach(produto => {
-
-tbody.innerHTML += `
-<tr class="produto-bloco">
-<td colspan="4">${produto}</td>
-</tr>
-`;
-
-let tamanhos = produtos[produto];
-
-Object.keys(tamanhos)
-.sort((a,b)=>ordemTamanhos.indexOf(a)-ordemTamanhos.indexOf(b))
-.forEach(tamanho => {
-
-tbody.innerHTML += `
-<tr class="tamanho-bloco">
-<td colspan="4">Tamanho ${tamanho}</td>
-</tr>
-`;
-
-Object.keys(tamanhos[tamanho]).forEach(cor => {
-
-let quantidade = tamanhos[tamanho][cor];
-
-tbody.innerHTML += `
-<tr>
-<td></td>
-<td>${cor}</td>
-<td>${tamanho}</td>
-<td>${quantidade}</td>
-</tr>
-`;
-
-});
-
-});
-
-});
-
-}
-
-
-btnRelatorio.addEventListener("click", function () {
-
-window.print();
-
-});
-
-});
