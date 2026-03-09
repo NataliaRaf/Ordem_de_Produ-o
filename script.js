@@ -156,15 +156,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function normalizarProduto(nome){
 
-        nome = nome.toLowerCase();
+    function normalizarProduto(nome){
 
-        if(nome.includes("kit") || nome.includes("conjunto")) return "Conjunto";
-        if(nome.includes("jaleco")) return "Jaleco";
-        if(nome.includes("calça")) return "Calça";
-        if(nome.includes("colete")) return "Colete";
+    nome = nome.toLowerCase();
 
-        return nome;
+    // kit de conjunto
+    if(nome.includes("kit") && nome.includes("conjunto")){
+        return "Conjunto";
+    }
 
+    // kit de jaleco
+    if(nome.includes("kit") && nome.includes("jaleco")){
+        return "Jaleco";
+    }
+
+    if(nome.includes("conjunto")){
+        return "Conjunto";
+    }
+
+    if(nome.includes("jaleco")){
+        return "Jaleco";
+    }
+
+    if(nome.includes("calça")){
+        return "Calça";
+    }
+
+    if(nome.includes("colete")){
+        return "Colete";
+    }
+
+    return nome;
+
+}
     }
 
     function montarMapa(planilha,mapa){
