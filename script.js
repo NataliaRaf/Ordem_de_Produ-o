@@ -152,22 +152,38 @@ atualizarTabela(this.value);
 
 
 
+/* NOVA FUNÇÃO DE CLASSIFICAÇÃO MAIS SEGURA */
+
 function normalizarProduto(nome){
 
 nome = nome.toLowerCase();
 
-// primeiro detectar conjuntos
-if(nome.includes("kit") || nome.includes("conjunto"))
-return "Conjunto";
+const regras = [
+{tipo:"Jaleco", palavras:["jaleco"]},
+{tipo:"Conjunto", palavras:["conjunto"]},
+{tipo:"Conjunto", palavras:["kit"]},
+{tipo:"Calça", palavras:["calça"]},
+{tipo:"Colete", palavras:["colete"]}
+];
 
-if(nome.includes("jaleco"))
+for(let regra of regras){
+
+for(let palavra of regra.palavras){
+
+if(nome.includes(palavra)){
+
+// evita kit jaleco virar conjunto
+if(regra.tipo === "Conjunto" && nome.includes("jaleco")){
 return "Jaleco";
+}
 
-if(nome.includes("calça"))
-return "Calça";
+return regra.tipo;
 
-if(nome.includes("colete"))
-return "Colete";
+}
+
+}
+
+}
 
 return "Outros";
 
