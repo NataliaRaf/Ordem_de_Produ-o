@@ -58,10 +58,13 @@ let quantidade = Number(linha["Quantidade"]) || 0;
 
 if (!nomeProduto || !variacao || quantidade === 0) return;
 
-let multiplicador = 1;
+if (nomeProduto.includes("kit 3")) {
+    quantidade = quantidade * 3;
+}
 
-if (nomeProduto.includes("kit 3")) multiplicador = 3;
-if (nomeProduto.includes("kit 2")) multiplicador = 2;
+if (nomeProduto.includes("kit 2")) {
+    quantidade = quantidade * 2;
+}
 
 let produtoBase = normalizarProduto(nomeProduto);
 
@@ -74,14 +77,7 @@ let cores = coresTexto.split("+").map(c => c.trim()).filter(c => c);
 
 cores.forEach(cor => {
 
-let valor;
-
-if(produtoBase.indexOf("Conjunto") !== -1){
-valor = (quantidade * multiplicador) / cores.length;
-}else{
-valor = quantidade;
-}
-
+let valor = quantidade;
 let chave = produtoBase + "|" + cor + "|" + tamanho;
 
 resultado[chave] = (resultado[chave] || 0) + valor;
@@ -142,25 +138,51 @@ atualizarTabela(this.value);
 
 function normalizarProduto(nome){
 
-nome = nome.toLowerCase();
+    nome = nome.toLowerCase();
 
-if(nome.includes("jaleco")) return "Jaleco";
+    if(nome.includes("conjunto") || nome.includes("kit")){
 
-if(nome.includes("conjunto") || nome.includes("kit")){
+        if(nome.includes("camiseta")){
+            return "Conjunto Camiseta";
+        }
 
-if(nome.includes("colete")) return "Conjunto (Colete)";
-if(nome.includes("blusa") || nome.includes("camisa")) return "Conjunto (Blusa)";
+        if(nome.includes("camisa")){
+            return "Conjunto Camisa";
+        }
 
-return "Conjunto";
+        if(nome.includes("blusa")){
+            return "Conjunto Blusa";
+        }
+
+        if(nome.includes("colete")){
+            return "Conjunto Colete";
+        }
+
+        return "Conjunto";
+    }
+
+    if(nome.includes("calça")){
+        return "Calça";
+    }
+
+    if(nome.includes("colete")){
+        return "Colete";
+    }
+
+    if(nome.includes("vestido")){
+        return "Vestido";
+    }
+
+    if(nome.includes("saia")){
+        return "Saia";
+    }
+
+    if(nome.includes("short")){
+        return "Short";
+    }
+
+    return nome.trim();
 }
-
-if(nome.includes("calça")) return "Calça";
-if(nome.includes("colete")) return "Colete";
-
-return "Outros";
-
-}
-
 
 function atualizarTabela(filtro){
 
