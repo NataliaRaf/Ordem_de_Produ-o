@@ -58,13 +58,6 @@ let quantidade = Number(linha["Quantidade"]) || 0;
 
 if (!nomeProduto || !variacao || quantidade === 0) return;
 
-if (nomeProduto.includes("kit 3")) {
-    quantidade = quantidade * 3;
-}
-
-if (nomeProduto.includes("kit 2")) {
-    quantidade = quantidade * 2;
-}
 
 let produtoBase = normalizarProduto(nomeProduto);
 
