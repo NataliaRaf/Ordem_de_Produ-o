@@ -4,6 +4,9 @@
 <head>
 
 <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Sistema de Produção</title>
 
 <link rel="stylesheet" href="style.css">
@@ -15,57 +18,77 @@
 <div class="container">
 
 <header class="topo">
-<h1>Painel de Produção</h1>
-<span id="dataRelatorio"></span>
-</header>
 
-<div>
 <h1>Painel de Produção</h1>
-<p id="dataRelatorio"></p>
-</div>
+
+<span id="dataRelatorio"></span>
 
 </header>
 
 
 <div class="controls">
 
-<input type="file" id="upload" accept=".xlsx, .xls">
+<input 
+    type="file" 
+    id="upload" 
+    accept=".xlsx,.xls"
+>
 
 <button id="btnProcessar">
-Processar Planilha
+    Processar Planilha
 </button>
 
 <select id="filtroProduto">
-<option value="todos">Todos os Produtos</option>
+
+<option value="todos">
+    Todos os Produtos
+</option>
+
 </select>
 
 <button id="btnRelatorio">
-Imprimir Relatório
+    Imprimir Relatório
 </button>
 
 </div>
 
 
 <!-- ALERTA DE PRODUÇÃO -->
-<div id="alertaProducao" class="alerta-producao"></div>
+
+<div 
+    id="alertaProducao" 
+    class="alerta-producao">
+</div>
 
 
 <!-- RESUMO DA PRODUÇÃO -->
+
 <div class="cards">
 
 <div class="card">
+
 <h3>Total Geral</h3>
+
 <p id="totalGeral">0</p>
+
 </div>
 
+
 <div class="card">
+
 <h3>Total por Produto</h3>
+
 <div id="totalPorProduto"></div>
+
 </div>
 
+
 <div class="card">
+
 <h3>Total por Cor</h3>
+
 <div id="totalPorCor"></div>
+
 </div>
 
 </div>
@@ -78,15 +101,25 @@ Imprimir Relatório
 <table id="tabela">
 
 <thead>
+
 <tr>
+
 <th>Produto</th>
+
 <th>Cor</th>
+
 <th>Tamanho</th>
+
 <th>Quantidade</th>
+
 </tr>
+
 </thead>
 
-<tbody></tbody>
+
+<tbody>
+
+</tbody>
 
 </table>
 
@@ -96,8 +129,15 @@ Imprimir Relatório
 </div>
 
 
+<!-- BIBLIOTECA PARA LER EXCEL -->
+
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<!-- SEU JAVASCRIPT -->
+
 <script src="script.js"></script>
 
+
 </body>
+
 </html>
