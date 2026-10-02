@@ -158,9 +158,17 @@ function normalizarProduto(nome){
         return "Calça";
     }
 
-    if(nome.includes("colete")){
-        return "Colete";
-    }
+    se(nome.inclui("colete") && nome.inclui("shorts")){
+    retornar "Conjunto Colete Shorts";
+}
+
+se(nome.inclui("colete") && nome.inclui("calça")){
+    retornar "Conjunto Colete Calça";
+}
+
+se(nome.inclui("colete")){
+    retornar "Conjunto Colete";
+}
 
     if(nome.includes("vestido")){
         return "Vestido";
