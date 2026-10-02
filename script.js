@@ -129,62 +129,37 @@ atualizarTabela(this.value);
 });
 
 
-function normalizarProduto(nome){
+if(nome.includes("conjunto") || nome.includes("kit")){
 
-    nome = nome.toLowerCase();
-
-    if(nome.includes("conjunto") || nome.includes("kit")){
-
-        if(nome.includes("camiseta")){
-            return "Conjunto Camiseta";
-        }
-
-        if(nome.includes("camisa")){
-            return "Conjunto Camisa";
-        }
-
-        if(nome.includes("blusa")){
-            return "Conjunto Blusa";
-        }
-
-        if(nome.includes("colete")){
-            return "Conjunto Colete";
-        }
-
-        return "Conjunto";
+    if(nome.includes("camiseta")){
+        return "Conjunto Camiseta";
     }
 
-    if(nome.includes("calça")){
-        return "Calça";
+    if(nome.includes("camisa")){
+        return "Conjunto Camisa";
     }
 
-    se(nome.inclui("colete") && nome.inclui("shorts")){
-    retornar "Conjunto Colete Shorts";
+    if(nome.includes("blusa")){
+        return "Conjunto Blusa";
+    }
+
+    // Conjunto de colete com shorts
+    if(nome.includes("colete") && nome.includes("short")){
+        return "Conjunto Colete Shorts";
+    }
+
+    // Conjunto de colete com calça
+    if(nome.includes("colete") && nome.includes("calça")){
+        return "Conjunto Colete Calça";
+    }
+
+    // Conjunto de colete sem especificação
+    if(nome.includes("colete")){
+        return "Conjunto Colete";
+    }
+
+    return "Conjunto";
 }
-
-se(nome.inclui("colete") && nome.inclui("calça")){
-    retornar "Conjunto Colete Calça";
-}
-
-se(nome.inclui("colete")){
-    retornar "Conjunto Colete";
-}
-
-    if(nome.includes("vestido")){
-        return "Vestido";
-    }
-
-    if(nome.includes("saia")){
-        return "Saia";
-    }
-
-    if(nome.includes("short")){
-        return "Short";
-    }
-
-    return nome.trim();
-}
-
 function atualizarTabela(filtro){
 
 const tbody = document.querySelector("#tabela tbody");
